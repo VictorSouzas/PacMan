@@ -2,21 +2,23 @@
 
 import pygame
 import os
-import Entity
+from Entity import Entity
 
 
 class Player(Entity):
     def __init__(self, x, y):
+        super(Entity, self).__init__()
         self.xvel = 0
         self.yvel = 0
         self.onGround = False
         self.image = pygame.image.load(os.path.join('', 'player.png'))
-        self.rect = pygame.Rect(32, 32)
+        self.rect = pygame.Rect(32, 32, 32, 32)
 
     def update(self, up, down, left, right, running, platform):
         if up:
             # only jump if on the ground
-            if self.onGround: self.yvel -= 10
+            if self.onGround:
+                self.yvel -= 10
         if down:
             pass
         if running:
@@ -30,7 +32,8 @@ class Player(Entity):
             # only accelerate with gravity if in the air
             self.yvel += 0.3
             # max falling speed
-            if self.yvel > 100: self.yvel = 100
+            if self.yvel > 100:
+                self.yvel = 100
         if not (left or right):
             self.xvel = 0
 

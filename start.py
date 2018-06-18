@@ -2,6 +2,9 @@
 
 import pygame
 from pygame import *
+from Platform import Platform
+from Player import Player
+from ExitBlock import ExitBlock
 
 # https://stackoverflow.com/questions/14354171/add-scrolling-to-a-platformer-in-pygame
 
@@ -149,91 +152,6 @@ def complex_camera(camera, target_rect):
     t = max(-(camera.height - WIN_HEIGHT), t)  # stop scrolling at the bottom
     t = min(0, t)  # stop scrolling at the top
     return Rect(l, t, w, h)
-
-
-class Entity(pygame.sprite.Sprite):
-    def __init__(self):
-        pygame.sprite.Sprite.__init__(self)
-
-
-class Player(Entity):
-    def __init__(self, x, y):
-        Entity.__init__(self)
-        self.xvel = 0
-        self.yvel = 0
-        self.onGround = False
-        self.image = Surface((32, 32))
-        self.image.fill(Color("#0000FF"))
-        self.image.convert()
-        self.rect = Rect(x, y, 32, 32)
-
-    def update(self, up, down, left, right, running, platforms):
-        if up:
-            # only jump if on the ground
-            if self.onGround:
-                self.yvel -= 10
-        if down:
-            pass
-        if running:
-            self.xvel = 12
-        if left:
-            self.xvel = -8
-        if right:
-            self.xvel = 8
-        if not self.onGround:
-            # only accelerate with gravity if in the air
-            self.yvel += 0.3
-            # max falling speed
-            if self.yvel > 100:
-                self.yvel = 100
-        if not (left or right):
-            self.xvel = 0
-        # increment in x direction
-        self.rect.left += self.xvel
-        # do x-axis collisions
-        self.collide(self.xvel, 0, platforms)
-        # increment in y direction
-        self.rect.top += self.yvel
-        # assuming we're in the air
-        self.onGround = False
-        # do y-axis collisions
-        self.collide(0, self.yvel, platforms)
-
-    def collide(self, xvel, yvel, platforms):
-        for p in platforms:
-            if pygame.sprite.collide_rect(self, p):
-                if isinstance(p, ExitBlock):
-                    pygame.event.post(pygame.event.Event(QUIT))
-                if xvel > 0:
-                    self.rect.right = p.rect.left
-                    print("collide right")
-                if xvel < 0:
-                    self.rect.left = p.rect.right
-                    print("collide left")
-                if yvel > 0:
-                    self.rect.bottom = p.rect.top
-                    self.onGround = True
-                    self.yvel = 0
-                if yvel < 0:
-                    self.rect.top = p.rect.bottom
-
-
-class Platform(Entity):
-    def __init__(self, x, y):
-        Entity.__init__(self)
-        self.image = Surface((32, 32))
-        self.image.convert()
-        self.image.fill(Color("#DDDDDD"))
-        self.rect = Rect(x, y, 32, 32)
-
-    def update(self):
-        pass
-
-
-class ExitBlock(Platform):
-    def __init__(self, x, y):
-        Platform.__init__(self, x, y)
-        self.image.fill(Color("#0033FF"))
 
 
 if __name__ == "__main__":

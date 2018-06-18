@@ -3,12 +3,12 @@
 from pygame import Surface
 from pygame import Color
 from pygame import Rect
-import Entity
+from Entity import Entity
 
 
 class Platform(Entity):
-    def __init__(self, x, y, color="#DDDDDDD"):
-        Entity.__init__(self)
+    def __init__(self, x, y, color="#DDDDDD"):
+        super(Entity, self).__init__()
         self.image = Surface((32, 32))
         self.image.convert()
         self.image.fill(Color(color))
