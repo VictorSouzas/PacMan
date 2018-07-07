@@ -8,8 +8,8 @@ from ExitBlock import ExitBlock
 
 # https://stackoverflow.com/questions/14354171/add-scrolling-to-a-platformer-in-pygame
 
-WIN_WIDTH = 800
-WIN_HEIGHT = 640
+WIN_WIDTH = 896
+WIN_HEIGHT = 736
 HALF_WIDTH = int(WIN_WIDTH / 2)
 HALF_HEIGHT = int(WIN_HEIGHT / 2)
 
@@ -17,6 +17,24 @@ DISPLAY = (WIN_WIDTH, WIN_HEIGHT)
 DEPTH = 32
 FLAGS = 0
 CAMERA_SLACK = 30
+
+
+def simple_camera(camera, target_rect):
+    l, t, _, _ = target_rect
+    _, _, w, h = camera
+    return Rect(-l +HALF_WIDTH, -t +HALF_HEIGHT, w, h)
+
+
+def complex_camera(camera, target_rect):
+    l, t, _, _ = target_rect
+    _, _, w, h = camera
+    l, t, _, _ = -l +HALF_WIDTH, -t +HALF_HEIGHT, w, h
+
+    l = min(0, l)  # stop scrolling at the left edge
+    l = max(-(camera.width -WIN_WIDTH), l)  # stop scrolling at the right edge
+    t = max(-(camera.height -WIN_HEIGHT), t)  # stop scrolling at the bottom
+    t = min(0, t)  # stop scrolling at the top
+    return Rect(l, t, w, h)
 
 
 def main():
@@ -31,40 +49,51 @@ def main():
     bg.convert()
     bg.fill(Color("#000000"))
     entities = pygame.sprite.Group()
-    player = Player(32, 32)
+    player = Player()
     platforms = []
 
     x = y = 0
     level = [
-        "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
-        "P                                          P",
-        "P                                          P",
-        "P                                          P",
-        "P                    PPPPPPPPPPP           P",
-        "P                                          P",
-        "P                                          P",
-        "P                                          P",
-        "P    PPPPPPPP                              P",
-        "P                                          P",
-        "P                          PPPPPPP         P",
-        "P                 PPPPPP                   P",
-        "P                                          P",
-        "P         PPPPPPP                          P",
-        "P                                          P",
-        "P                     PPPPPP               P",
-        "P                                          P",
-        "P   PPPPPPPPPPP                            P",
-        "P                                          P",
-        "P                 PPPPPPPPPPP              P",
-        "P                                          P",
-        "P                                          P",
-        "P                                          P",
-        "P                                          P",
-        "PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP", ]
+        "0000000000000000000000000000",
+        "0000000000000000000000000000",
+        "0000000000000000000000000000",
+        "0000000000000000000000000000",
+        "0+----+-----+00+-----+----+0",
+        "0|0000|00000|00|00000|0000|0",
+        "0|0000|00000|00|00000|0000|0",
+        "0|0000|00000|00|00000|0000|0",
+        "0+----+--+--+--+--+--+----+0",
+        "0|0000|00|00000000|00|0000|0",
+        "0|0000|00|00000000|00|0000|0",
+        "0+----+00+--+00+--+00+----+0",
+        "000000|00000|00|00000|000000",
+        "000000|00000|00|00000|000000",
+        "000000|00+--+--+--+00|000000",
+        "000000|00|00000000|00|000000",
+        "000000|00|00000000|00|000000",
+        "+-----+--+00000000+--+-----+",
+        "000000|00|00000000|00|000000",
+        "000000|00|00000000|00|000000",
+        "000000|00+--------+00|000000",
+        "000000|00|00000000|00|000000",
+        "000000|00|00000000|00|000000",
+        "0+----+--+--+00+--+--+----+0",
+        "0|0000|00000|00|00000|0000|0",
+        "0|0000|00000|00|00000|0000|0",
+        "0+-+00+--+--+--+--+--+00+-+0",
+        "000|00|00|00000000|00|00|000",
+        "000|00|00|00000000|00|00|000",
+        "0+-+--+00+--+00+--+00+--+-+0",
+        "0|0000000000|00|0000000000|0",
+        "0|0000000000|00|0000000000|0",
+        "0+----------+--+----------+0",
+        "0000000000000000000000000000",
+        "0000000000000000000000000000",
+        "0000000000000000000000000000"]
     # build the level
     for row in level:
         for col in row:
-            if col == "P":
+            if col == "0":
                 p = Platform(x, y)
                 platforms.append(p)
                 entities.add(p)
@@ -134,24 +163,6 @@ class Camera(object):
 
     def update(self, target):
         self.state = self.camera_func(self.state, target.rect)
-
-
-def simple_camera(camera, target_rect):
-    l, t, _, _ = target_rect
-    _, _, w, h = camera
-    return Rect(-l + HALF_WIDTH, -t + HALF_HEIGHT, w, h)
-
-
-def complex_camera(camera, target_rect):
-    l, t, _, _ = target_rect
-    _, _, w, h = camera
-    l, t, _, _ = -l + HALF_WIDTH, -t + HALF_HEIGHT, w, h
-
-    l = min(0, l)  # stop scrolling at the left edge
-    l = max(-(camera.width - WIN_WIDTH), l)  # stop scrolling at the right edge
-    t = max(-(camera.height - WIN_HEIGHT), t)  # stop scrolling at the bottom
-    t = min(0, t)  # stop scrolling at the top
-    return Rect(l, t, w, h)
 
 
 if __name__ == "__main__":

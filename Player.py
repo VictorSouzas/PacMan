@@ -6,13 +6,13 @@ from Entity import Entity
 
 
 class Player(Entity):
-    def __init__(self, x, y):
+    def __init__(self):
         super(Entity, self).__init__()
         self.xvel = 0
         self.yvel = 0
         self.onGround = False
         self.image = pygame.image.load(os.path.join('', 'player.png'))
-        self.rect = pygame.Rect(32, 32, 32, 32)
+        self.rect = pygame.Rect(128, 128, 32, 32)
 
     def update(self, up, down, left, right, running, platform):
         if up:
@@ -57,8 +57,8 @@ class Player(Entity):
                     self.rect.left = p.rect.right
                     print("collide left")
                 if yvel > 0:
-                    self.rect.bottom = p.rect.bottom
+                    self.rect.bottom = p.rect.top
                     self.onGround = True
                     self.yvel = 0
-                if xvel < 0:
+                if yvel < 0:
                     self.rect.top = p.rect.bottom
