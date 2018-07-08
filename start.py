@@ -1,10 +1,12 @@
 #! /usr/bin/python
 
-import pygame
 from pygame import *
 from Platform import Platform
 from Player import Player
 from ExitBlock import ExitBlock
+
+import pygame
+import os
 
 # https://stackoverflow.com/questions/14354171/add-scrolling-to-a-platformer-in-pygame
 
@@ -52,6 +54,8 @@ def main():
     player = Player()
     platforms = []
 
+    block = pygame.image.load(os.path.join('', 'block.png'))
+
     x = y = 0
     level = [
         "0000000000000000000000000000",
@@ -94,7 +98,7 @@ def main():
     for row in level:
         for col in row:
             if col == "0":
-                p = Platform(x, y)
+                p = Platform(x, y, block)
                 platforms.append(p)
                 entities.add(p)
             if col == "E":

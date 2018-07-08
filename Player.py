@@ -16,11 +16,9 @@ class Player(Entity):
 
     def update(self, up, down, left, right, running, platform):
         if up:
-            # only jump if on the ground
-            if self.onGround:
-                self.yvel -= 10
+            self.yvel -= 7
         if down:
-            pass
+            self.yvel = 7
         if running:
             self.xvel = 12
         if left:
@@ -28,12 +26,8 @@ class Player(Entity):
         if right:
             self.xvel = 8
 
-        if not self.onGround:
-            # only accelerate with gravity if in the air
-            self.yvel += 0.3
-            # max falling speed
-            if self.yvel > 100:
-                self.yvel = 100
+        if not (up or down):
+            self.yvel = 0
         if not (left or right):
             self.xvel = 0
 
@@ -58,7 +52,8 @@ class Player(Entity):
                     print("collide left")
                 if yvel > 0:
                     self.rect.bottom = p.rect.top
-                    self.onGround = True
+                    # self.onGround = True
                     self.yvel = 0
                 if yvel < 0:
                     self.rect.top = p.rect.bottom
+                    self.yvel = 0
